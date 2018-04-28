@@ -83,7 +83,7 @@ class StInput
         };
 
         // mouse button codes
-        this.isMouseButton = {
+        this.MouseButton = {
             left: 0,
             middle: 1,
             right: 2,
@@ -281,7 +281,7 @@ class StInput
 
     /**
      * Get if mouse button is currently pressed.
-     * @param {isMouseButton} button Button code (defults to isMouseButton.Left).
+     * @param {MouseButton} button Button code (defults to MouseButton.left).
      */
     isMouseButtonDown(button = 0)
     {
@@ -291,7 +291,7 @@ class StInput
 
     /**
      * Get if mouse button is currently not pressed.
-     * @param {isMouseButton} button Button code (defults to isMouseButton.Left).
+     * @param {MouseButton} button Button code (defults to MouseButton.left).
      */
     isMouseButtonUp(button = 0)
     {
@@ -301,9 +301,9 @@ class StInput
     
     /**
      * Get if mouse button was clicked since last endFrame() call.
-     * @param {isMouseButton} button Button code (defults to isMouseButton.Left).
+     * @param {MouseButton} button Button code (defults to MouseButton.left).
      */
-    isMouseButtonClicked(button = 0)
+    isMouseButtonReleased(button = 0)
     {
         if (button === undefined) throw new Error("Invalid button code!");
         return this._mouseClick[button] === true;
@@ -393,7 +393,7 @@ class StInput
             var codename = code.split('_')[1];
 
             // return if mouse down
-            return this.isMouseButtonDown(this.isMouseButton[codename]);
+            return this.isMouseButtonDown(this.MouseButton[codename]);
         }
 
         // if its just a number, add the 'n' prefix
@@ -423,7 +423,7 @@ class StInput
             var codename = code.split('_')[1];
 
             // return if mouse down
-            return this.isMouseButtonClicked(this.isMouseButton[codename]);
+            return this.isMouseButtonReleased(this.MouseButton[codename]);
         }
 
         // if its just a number, add the 'n' prefix

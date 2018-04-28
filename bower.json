@@ -1,0 +1,24 @@
+{
+  "name": "stinput",
+  "version": "1.0.0",
+  "homepage": "https://ronenness.github.io/stinput/",
+  "authors": [
+    "Ronen Ness <ronenness@gmail.com>"
+  ],
+  "description": "Simple state-based input for browsers.",
+  "keywords": [
+    "input",
+    "state",
+    "keyboard",
+    "mouse"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "main": "stinput.js"
+}
