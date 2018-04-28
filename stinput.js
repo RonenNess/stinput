@@ -192,6 +192,9 @@ class StInput
             single_quote: 222,
         };
 
+        // should we reset on focus lost?
+        this.resetOnFocusLoss = true;
+
         // reset all data to init initial state
         this._resetAll();
                 
@@ -460,7 +463,8 @@ class StInput
      */
     _onBlur(event)
     {
-        this._resetAll();
+        if (this.resetOnFocusLoss)
+            this._resetAll();
     }
 
     /**
