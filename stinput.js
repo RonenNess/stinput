@@ -62,7 +62,7 @@ class Point
 
 /**
  * Simple state-based input manager to handle mouse and keyboard events.
- * To use make sure to call .update() at the end of every frame in your main loop.
+ * To use make sure to call .endFrame() at the end of every frame in your main loop.
  */
 class StInput
 {
@@ -74,16 +74,16 @@ class StInput
         // set all the events to listen to
         var _this = this;
         this._callbacks = {
-            'click': function(event) {_this._onClick(event);},
             'mousedown': function(event) {_this._onMouseDown(event);},
             'mouseup': function(event) {_this._onMouseUp(event);},
             'mousemove': function(event) {_this._onMouseMove(event);},
             'keydown': function(event) {_this._onKeyDown(event);},
             'keyup': function(event) {_this._onKeyUp(event);},
+            'blur': function(event) {_this._onBlur(event);},
         };
 
         // mouse button codes
-        this.MouseButton = {
+        this.isMouseButton = {
             left: 0,
             middle: 1,
             right: 2,
@@ -110,6 +110,7 @@ class StInput
             down_arrow: 40,
             insert: 45,
             delete: 46,
+            space: 32,
             n0: 48,
             n1: 49,
             n2: 50,
@@ -191,15 +192,8 @@ class StInput
             single_quote: 222,
         };
 
-        // mouse states
-        this._mousePos = new Point();
-        this._mouseState = {};
-        this._mouseClick = {};
-        this._mousePrevPos = new Point();
-
-        // keyboard keys
-        this._keyboardState = {};
-        this._keyboardReleased = {};
+        // reset all data to init initial state
+        this._resetAll();
                 
         // register all callbacks
         for (var event in this._callbacks) {
@@ -216,11 +210,28 @@ class StInput
         // unregister all callbacks
         if (this._callbacks)
         {
-            for (var event in this._callbacks)
+            for (var event in this._callbacks) {
                 window.removeEventListener(event, this._callbacks[event]);
-
+            }
             this._callbacks = null;
         }
+    }
+
+    /**
+     * Reset all internal data and states.
+     */
+    _resetAll()
+    {
+        // mouse states
+        this._mousePos = new Point();
+        this._mouseState = {};
+        this._mouseClick = {};
+        this._mousePrevPos = new Point();
+        this._mouseMoveCache = null;
+
+        // keyboard keys
+        this._keyboardState = {};
+        this._keyboardReleased = {};
     }
     
     /**
@@ -233,7 +244,7 @@ class StInput
     }
         
     /**
-     * Get mouse previous position (before the last update() call).
+     * Get mouse previous position (before the last endFrame() call).
      * @returns {Point} Mouse position.
      */
     get prevMousePosition()
@@ -242,17 +253,22 @@ class StInput
     }
 
     /**
-     * Get mouse movement since last update() call.
+     * Get mouse movement since last endFrame() call.
      * @returns {Point} Mouse diff.
      */
     get mouseMove()
     {
+        // already calculated mouse movement this frame? return it
+        if (this._mouseMoveCache)
+            return this._mouseMoveCache;
+
         // no previous position? return 0,0.
         if (!this._mousePrevPos)
             return Point.zero;
 
         // get mouse diff
-        return new Point(this._mousePos.x - this._mousePrevPos.x, this._mousePos.y - this._mousePrevPos.y);
+        this._mouseMoveCache = new Point(this._mousePos.x - this._mousePrevPos.x, this._mousePos.y - this._mousePrevPos.y);
+        return this._mouseMoveCache;
     }
 
     /**
@@ -265,83 +281,97 @@ class StInput
 
     /**
      * Get if mouse button is currently pressed.
-     * @param {MouseButton} button Button code (defults to MouseButton.Left).
+     * @param {isMouseButton} button Button code (defults to isMouseButton.Left).
      */
-    mouseButtonDown(button)
+    isMouseButtonDown(button = 0)
     {
-        if (button === undefined) button = this.MouseButton.left;
+        if (button === undefined) throw new Error("Invalid button code!");
         return this._mouseState[button] === true;
     }
 
     /**
      * Get if mouse button is currently not pressed.
-     * @param {MouseButton} button Button code (defults to MouseButton.Left).
+     * @param {isMouseButton} button Button code (defults to isMouseButton.Left).
      */
-    mouseButtonUp(button)
+    isMouseButtonUp(button = 0)
     {
-        if (button === undefined) button = this.MouseButton.left;
-        return !this.mouseButtonDown(button);
+        if (button === undefined) throw new Error("Invalid button code!");
+        return !this.isMouseButtonDown(button);
+    }
+    
+    /**
+     * Get if mouse button was clicked since last endFrame() call.
+     * @param {isMouseButton} button Button code (defults to isMouseButton.Left).
+     */
+    isMouseButtonClicked(button = 0)
+    {
+        if (button === undefined) throw new Error("Invalid button code!");
+        return this._mouseClick[button] === true;
     }
 
     /**
      * Get if keyboard button is currently pressed.
      * @param {KeyboardButton} button Button code.
      */
-    keyboardButtonDown(button)
+    isKeyboardButtonDown(button)
     {
-        return this._mouseState[button] === true;
+        if (button === undefined) throw new Error("Invalid button code!");
+        return this._keyboardState[button] === true;
     }
 
     /**
      * Get if keyboard button is currently not pressed.
      * @param {KeyboardButton} button Button code.
      */
-    keyboardButtonUp(button)
+    isKeyboardButtonUp(button)
     {
-        return !this.keyboardButtonDown(button);
+        return !this.isKeyboardButtonDown(button);
     }
 
     /**
      * Get if keyboard button was released this frame.
      * @param {KeyboardButton} button Button code.
      */
-    keyboardButtonReleased(button)
+    isKeyboardButtonReleased(button)
     {
+        if (button === undefined) throw new Error("Invalid button code!");
         return this._keyboardReleased[button] === true;
     }
 
     /**
      * Get if shift is currently pressed.
      */
-    get isShiftPressed()
+    get isShiftDown()
     {
-        return this.keyboardButtonDown(this.KeyboardButton.shift);
+        return this.isKeyboardButtonDown(this.KeyboardButton.shift);
     }
 
     /**
      * Get if ctrl is currently pressed.
      */
-    get isCtrlPressed()
+    get isCtrlDown()
     {
-        return this.keyboardButtonDown(this.KeyboardButton.ctrl);
+        return this.isKeyboardButtonDown(this.KeyboardButton.ctrl);
     }
 
     /**
      * Get if alt is currently pressed.
      */
-    get isAltPressed()
+    get isAltDown()
     {
-        return this.keyboardButtonDown(this.KeyboardButton.alt);
+        return this.isKeyboardButtonDown(this.KeyboardButton.alt);
     }
 
     /**
-     * Get if mouse button was clicked since last update() call.
-     * @param {MouseButton} button Button code (defults to MouseButton.Left).
+     * Get if any keyboard key is currently down.
      */
-    mouseButtonClicked(button)
+    get isAnyKeyDown()
     {
-        if (button === undefined) button = this.MouseButton.left;
-        return this._mouseClick[button] === true;
+        for (var key in this._keyboardState) {
+            if (this._keyboardState[key])
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -357,13 +387,13 @@ class StInput
         code = String(code);
 
         // if starts with 'mouse' its for mouse button events
-        if (code.indexOf('mouse') === 0) {
+        if (code.indexOf('mouse_') === 0) {
 
             // get mouse code name
             var codename = code.split('_')[1];
 
             // return if mouse down
-            return this.mouseButtonDown(this.MouseButton[codename]);
+            return this.isMouseButtonDown(this.isMouseButton[codename]);
         }
 
         // if its just a number, add the 'n' prefix
@@ -371,7 +401,7 @@ class StInput
             code = 'n' + code;
 
         // if not start with 'mouse', treat it as a keyboard key
-        return this.keyboardButtonDown(this.KeyboardButton[code]);
+        return this.isKeyboardButtonDown(this.KeyboardButton[code]);
     }
 
     /**
@@ -393,7 +423,7 @@ class StInput
             var codename = code.split('_')[1];
 
             // return if mouse down
-            return this.mouseButtonClicked(this.MouseButton[codename]);
+            return this.isMouseButtonClicked(this.isMouseButton[codename]);
         }
 
         // if its just a number, add the 'n' prefix
@@ -401,18 +431,36 @@ class StInput
             code = 'n' + code;
 
         // if not start with 'mouse', treat it as a keyboard key
-        return this.keyboardButtonReleased(this.KeyboardButton[code]);
+        return this.isKeyboardButtonReleased(this.KeyboardButton[code]);
     }
 
     /**
      * update event states.
      * Call this every frame, *at the end of your main loop code*, to make sure events like mouse-click and mouse move work.
      */
-    update()
+    endFrame()
     {
         this._mouseClick = {};
         this._mousePrevPos = this._mousePos.clone();
         this._keyboardReleased = {};
+        this._mouseMoveCache = null;
+    }
+
+    /**
+     * Get keyboard key code from event.
+     */
+    _getKeyboardKeyCode(event)
+    {
+        event = this._getEvent(event);
+        return event.keyCode !== undefined ? event.keyCode : event.key.charCodeAt(0);
+    }
+
+    /**
+     * Called when window loses focus - clear all input states to prevent keys getting stuck.
+     */
+    _onBlur(event)
+    {
+        this._resetAll();
     }
 
     /**
@@ -421,8 +469,8 @@ class StInput
      */
     _onKeyDown(event)
     {
-        event = this._getEvent(event);
-        this._keyboardState[event.keyCode] = true;
+        var keycode = this._getKeyboardKeyCode(event);
+        this._keyboardState[keycode] = true;
     }
 
     /**
@@ -431,19 +479,9 @@ class StInput
      */
     _onKeyUp(event)
     {
-        event = this._getEvent(event);
-        this._keyboardState[event.keyCode] = false;
-        this._keyboardReleased[event.keyCode] = true;
-    }
-
-    /**
-     * Handle click event.
-     * @param {*} event Event data from browser.
-     */
-    _onClick(event)
-    {
-        event = this._getEvent(event);
-        this._mouseClick[event.button] = true;
+        var keycode = this._getKeyboardKeyCode(event);
+        this._keyboardState[keycode] = false;
+        this._keyboardReleased[keycode] = true;
     }
 
     /**
@@ -464,6 +502,7 @@ class StInput
     {
         event = this._getEvent(event);
         this._mouseState[event.button] = false;
+        this._mouseClick[event.button] = true;
     }
 
     /**

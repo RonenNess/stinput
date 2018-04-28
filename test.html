@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="State-based input for JavaScript.">
+    <meta name="author" content="Ronen Ness">
+
+    <title>StInput.js</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- disable text selection -->
+    <style>
+        * {
+            -webkit-touch-callout: none;    /* iOS Safari */
+            -webkit-user-select: none;      /* Safari */
+            -khtml-user-select: none;       /* Konqueror HTML */
+            -moz-user-select: none;         /* Firefox */
+            -ms-user-select: none;          /* Internet Explorer/Edge */
+            user-select: none;              /* Non-prefixed version, currently supported by Chrome and Opera */
+        }
+    </style>
+
+</head>
+
+<body style="width:100%; height:100%; position:fixed; overflow: hidden;">
+
+    <!-- Include main code -->
+    <script src="stinput.js"></script>
+
+    <div class="container">
+        <div class="row">
+
+            <h1>StInput.js</h1>
+
+            <div id="data-show">
+
+            </div>
+
+        </div>
+    </div>
+
+	<!-- Jquery and Bootstrap js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <!-- test code -->
+    <script>
+        // create the input manager
+        input = new StInput();
+
+        var is_down_mouse_left = 0;
+        var is_down_mouse_right = 0;
+        var is_down_mouse_middle = 0;
+        var is_released_mouse_left = 0;
+        var is_released_left_arrow = 0;
+        var is_released_right_arrow = 0;
+        var is_released_up_arrow = 0;
+        var is_released_down_arrow = 0;
+        var is_down_space = 0;
+        var mouse_moved = 0;
+        var last_mouse_move = "";
+        var is_ctrl_down = 0;
+        var is_alt_down = 0;
+        var is_shift_down = 0;
+        var is_any_key_down = 0;
+
+        // our main loop
+        function mainLoop() 
+        {
+            if (input.isDown('mouse_left')) {
+                is_down_mouse_left++;
+            }
+            if (input.isDown('mouse_right')) {
+                is_down_mouse_right++;
+            }
+            if (input.isDown('mouse_middle')) {
+                is_down_mouse_middle++;
+            }
+            if (input.isReleased('mouse_left')) {
+                is_released_mouse_left++;
+            }
+            if (input.isReleased('left_arrow')) {
+                is_released_left_arrow++;
+            }
+            if (input.isReleased('right_arrow')) {
+                is_released_right_arrow++;
+            }
+            if (input.isReleased('up_arrow')) {
+                is_released_up_arrow++;
+            }
+            if (input.isReleased('down_arrow')) {
+                is_released_down_arrow++;
+            }
+            if (input.isDown('space')) {
+                is_down_space++;
+            }
+            if (input.isCtrlDown) {
+                is_ctrl_down++;
+            }
+            if (input.isAltDown) {
+                is_alt_down++;
+            }
+            if (input.isShiftDown) {
+                is_shift_down++;
+            }
+            if (input.isAnyKeyDown) {
+                is_any_key_down++;
+            }
+            
+            // mouse moved
+            if (input.isMouseMoving) {
+                mouse_moved++;
+                last_mouse_move = input.mouseMove.x + "," + input.mouseMove.y;
+            }
+
+            // update text
+            var container = $("#data-show");
+            container.html("");
+            container.append($("<p>input.isDown('mouse_left') --> " + is_down_mouse_left + "</p>"));
+            container.append($("<p>input.isDown('mouse_right') --> " + is_down_mouse_right + "</p>"));
+            container.append($("<p>input.isDown('mouse_middle') --> " + is_down_mouse_middle + "</p>"));
+            container.append($("<p>input.isReleased('mouse_left') --> " + is_released_mouse_left + "</p>"));
+            container.append($("<p>input.isReleased('left_arrow') --> " + is_released_left_arrow + "</p>"));
+            container.append($("<p>input.isReleased('right_arrow') --> " + is_released_right_arrow + "</p>"));
+            container.append($("<p>input.isReleased('up_arrow') --> " + is_released_up_arrow + "</p>"));
+            container.append($("<p>input.isReleased('down_arrow') --> " + is_released_down_arrow + "</p>"));
+            container.append($("<p>input.isDown('space') --> " + is_down_space + "</p>"));
+            container.append($("<p>input.isMouseMoving --> " + mouse_moved + "</p>"));
+            container.append($("<p>input.mouseMove --> " + last_mouse_move + "</p>"));
+            container.append($("<p>input.isCtrlDown --> " + is_ctrl_down + "</p>"));
+            container.append($("<p>input.isAltDown --> " + is_alt_down + "</p>"));
+            container.append($("<p>input.isShiftDown --> " + is_shift_down + "</p>"));
+            container.append($("<p>input.isAnyKeyDown --> " + is_any_key_down + "</p>"));
+            
+            // update input
+            input.endFrame();
+        }
+
+        // start main loop
+        setInterval(mainLoop);
+    </script>
+
+</body>
+
+</html>

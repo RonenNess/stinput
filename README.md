@@ -4,7 +4,7 @@ State-based input for JavaScript.
 
 # Usage:
 
-To use `StInput` you need to create a manager instance, update it every frame, and query it. 
+To use `StInput` you need to create a manager instance, update it at the end of every frame, and query it. 
 For example:
 
 ```js
@@ -35,7 +35,7 @@ function mainLoop()
 	}
 	
 	// update input
-	input.update();
+	input.endFrame();
 }
 
 // start main loop
