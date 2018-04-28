@@ -20,7 +20,7 @@ bower install stinput
 
 Just fetch `stinput.js` from this repo and include in your web page.
 
-## Usage
+## Usage Example
 
 To use `StInput` you need to create an StInput instance, update it at the end of every frame, and query it. 
 
@@ -67,13 +67,13 @@ And when you're done using it call ```input.dispose()```, which will unregister 
 
 ### Create / Destroy
 
-Creating New StInput
+Creating New StInput:
 
 ```js
 var input = new StInput();
 ```
 
-Destroying StInput
+Destroying StInput:
 
 ```js
 input.dispose();
@@ -84,48 +84,69 @@ input.dispose();
 Checking if mouse button is down:
 
 ```js
-input.isDown('mouse_left')			// left mouse button
-input.isDown('mouse_right')			// right mouse button
-input.isDown('mouse_middle')		// middle mouse button
+input.isDown('mouse_left')           // left mouse button
+input.isDown('mouse_right')          // right mouse button
+input.isDown('mouse_middle')         // middle mouse button
 
 // Or:
 
-input.isMouseButtonDown(input.MouseButton.left)			// left mouse button
-input.isMouseButtonDown(input.MouseButton.right)		// right mouse button
-input.isMouseButtonDown(input.MouseButton.middle)		// middle mouse button
+input.isMouseButtonDown(input.MouseButton.left)         // left mouse button
+input.isMouseButtonDown(input.MouseButton.right)        // right mouse button
+input.isMouseButtonDown(input.MouseButton.middle)       // middle mouse button
 ```
 
 Checking if mouse button was released this frame:
 
 ```js
-input.isReleased('mouse_left')			// left mouse button
-input.isReleased('mouse_right')			// right mouse button
-input.isReleased('mouse_middle')		// middle mouse button
+input.isReleased('mouse_left')          // left mouse button
+input.isReleased('mouse_right')         // right mouse button
+input.isReleased('mouse_middle')        // middle mouse button
 
 // Or:
 
-input.isMouseButtonReleased(input.MouseButton.left)			// left mouse button
-input.isMouseButtonReleased(input.MouseButton.right)		// right mouse button
-input.isMouseButtonReleased(input.MouseButton.middle)		// middle mouse button
+input.isMouseButtonReleased(input.MouseButton.left)          // left mouse button
+input.isMouseButtonReleased(input.MouseButton.right)         // right mouse button
+input.isMouseButtonReleased(input.MouseButton.middle)        // middle mouse button
 ```
 
 ### Mouse Position & Movement
 
-Get mouse current position
+Get mouse current position:
 
 ```js
-var mousePos = input.mousePosition
+input.mousePosition			// returns Point with x,y representing mouse current position
 ```
 
 Checking if mouse is currently moving:
 
 ```js
-input.isMouseMoving
+input.isMouseMoving			// returns true if mouse is currently moving
 ```
 
 Get a point {x,y} representing mouse movement since last frame:
 
 ```js
-var movement = input.mouseMove
+input.mouseMove			// returns Point with x,y representing mouse movement
 ```
 
+### Keyboard
+
+Checking if keyboard key is down:
+
+```js
+input.isDown('a')          	// returns if 'a' key is down
+
+// Or:
+
+input.isKeyboardButtonDown(input.KeyboardButton.a)          	// returns if 'a' key is down
+```
+
+Checking if keyboard key was released this frame:
+
+```js
+input.isReleased('a')      // returns if 'a' key was released this frame
+
+// Or:
+
+input.isKeyboardButtonReleased(input.KeyboardButton.a) 		// returns if 'a' key was released this frame
+```
