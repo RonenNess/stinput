@@ -20,6 +20,10 @@ bower install stinput
 
 Just fetch `stinput.js` from this repo and include in your web page.
 
+## Supported Browsers
+
+StInput don't require any external libs and should work on all modern browsers, but note that it uses JavaScript classes and therefor requires ECMAScript 2015 or newer to run.
+
 ## Usage Example
 
 To use `StInput` you need to create an StInput instance, update it at the end of every frame, and query it. 
