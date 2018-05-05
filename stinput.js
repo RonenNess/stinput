@@ -400,7 +400,7 @@ class StInput
         }
 
         // if its just a number, add the 'n' prefix
-        if (parseInt(code) != NaN && code.length === 1)
+        if (!isNaN(parseInt(code)) && code.length === 1)
             code = 'n' + code;
 
         // if not start with 'mouse', treat it as a keyboard key
