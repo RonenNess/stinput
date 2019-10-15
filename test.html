@@ -70,6 +70,13 @@
         var is_released_right_arrow = 0;
         var is_released_up_arrow = 0;
         var is_released_down_arrow = 0;
+		var is_pressed_mouse_left = 0;
+        var is_pressed_left_arrow = 0;
+        var is_pressed_right_arrow = 0;
+        var is_pressed_up_arrow = 0;
+        var is_pressed_down_arrow = 0;
+		var mouse_wheel_delta = 0;
+		var mouse_wheel_delta_normal = 0;
         var is_down_space = 0;
         var mouse_moved = 0;
         var last_mouse_move = "";
@@ -90,20 +97,35 @@
             if (input.isDown('mouse_middle')) {
                 is_down_mouse_middle++;
             }
-            if (input.isReleased('mouse_left')) {
+            if (input.releasedNow('mouse_left')) {
                 is_released_mouse_left++;
             }
-            if (input.isReleased('left_arrow')) {
+            if (input.releasedNow('left_arrow')) {
                 is_released_left_arrow++;
             }
-            if (input.isReleased('right_arrow')) {
+            if (input.releasedNow('right_arrow')) {
                 is_released_right_arrow++;
             }
-            if (input.isReleased('up_arrow')) {
+            if (input.releasedNow('up_arrow')) {
                 is_released_up_arrow++;
-            }
-            if (input.isReleased('down_arrow')) {
+            }	
+			if (input.releasedNow('down_arrow')) {
                 is_released_down_arrow++;
+            }
+			if (input.pressedNow('mouse_left')) {
+                is_pressed_mouse_left++;
+            }
+            if (input.pressedNow('left_arrow')) {
+                is_pressed_left_arrow++;
+            }
+            if (input.pressedNow('right_arrow')) {
+                is_pressed_right_arrow++;
+            }
+            if (input.pressedNow('up_arrow')) {
+                is_pressed_up_arrow++;
+            }
+			if (input.pressedNow('down_arrow')) {
+                is_pressed_down_arrow++;
             }
             if (input.isDown('space')) {
                 is_down_space++;
@@ -120,7 +142,9 @@
             if (input.isAnyKeyDown) {
                 is_any_key_down++;
             }
-            
+			mouse_wheel_delta += input.mouseWheelChange;
+            mouse_wheel_delta_normal += input.mouseWheelChangeNormalized;
+			
             // mouse moved
             if (input.isMouseMoving) {
                 mouse_moved++;
@@ -133,11 +157,18 @@
             container.append($("<p>input.isDown('mouse_left') --> " + is_down_mouse_left + "</p>"));
             container.append($("<p>input.isDown('mouse_right') --> " + is_down_mouse_right + "</p>"));
             container.append($("<p>input.isDown('mouse_middle') --> " + is_down_mouse_middle + "</p>"));
-            container.append($("<p>input.isReleased('mouse_left') --> " + is_released_mouse_left + "</p>"));
-            container.append($("<p>input.isReleased('left_arrow') --> " + is_released_left_arrow + "</p>"));
-            container.append($("<p>input.isReleased('right_arrow') --> " + is_released_right_arrow + "</p>"));
-            container.append($("<p>input.isReleased('up_arrow') --> " + is_released_up_arrow + "</p>"));
-            container.append($("<p>input.isReleased('down_arrow') --> " + is_released_down_arrow + "</p>"));
+			container.append($("<p>input.mouseWheelChange --> " + mouse_wheel_delta + "</p>"));
+			container.append($("<p>input.mouseWheelChangeNormalized --> " + mouse_wheel_delta_normal + "</p>"));
+            container.append($("<p>input.releasedNow('mouse_left') --> " + is_released_mouse_left + "</p>"));
+            container.append($("<p>input.releasedNow('left_arrow') --> " + is_released_left_arrow + "</p>"));
+            container.append($("<p>input.releasedNow('right_arrow') --> " + is_released_right_arrow + "</p>"));
+            container.append($("<p>input.releasedNow('up_arrow') --> " + is_released_up_arrow + "</p>"));
+            container.append($("<p>input.releasedNow('down_arrow') --> " + is_released_down_arrow + "</p>"));
+			container.append($("<p>input.pressedNow('mouse_left') --> " + is_pressed_mouse_left + "</p>"));
+            container.append($("<p>input.pressedNow('left_arrow') --> " + is_pressed_left_arrow + "</p>"));
+            container.append($("<p>input.pressedNow('right_arrow') --> " + is_pressed_right_arrow + "</p>"));
+            container.append($("<p>input.pressedNow('up_arrow') --> " + is_pressed_up_arrow + "</p>"));
+            container.append($("<p>input.pressedNow('down_arrow') --> " + is_pressed_down_arrow + "</p>"));
             container.append($("<p>input.isDown('space') --> " + is_down_space + "</p>"));
             container.append($("<p>input.isMouseMoving --> " + mouse_moved + "</p>"));
             container.append($("<p>input.mouseMove --> " + last_mouse_move + "</p>"));

@@ -1,5 +1,5 @@
  /**
-  * StInput v1.0.0
+  * StInput v1.0.2
   */
  (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.StInput = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -79,6 +79,7 @@ class StInput
             'mousemove': function(event) {_this._onMouseMove(event);},
             'keydown': function(event) {_this._onKeyDown(event);},
             'keyup': function(event) {_this._onKeyUp(event);},
+			'wheel': function(event) {_this._onMouseWheel(event);},
             'blur': function(event) {_this._onBlur(event);},
         };
 
@@ -228,13 +229,16 @@ class StInput
         // mouse states
         this._mousePos = new Point();
         this._mouseState = {};
+		this._mousePressedNow = {};
         this._mouseClick = {};
         this._mousePrevPos = new Point();
         this._mouseMoveCache = null;
+		this._mouseWheel = {delta: 0};
 
         // keyboard keys
         this._keyboardState = {};
-        this._keyboardReleased = {};
+        this._keyboardReleasedNow = {};
+		this._keyboardPressedNow = {};
     }
     
     /**
@@ -281,7 +285,23 @@ class StInput
     {
         return (this._mousePrevPos && !this._mousePrevPos.equals(this._mousePos));
     }
+	
+	/**
+     * Get if mouse wheel delta on Y axis.
+     */
+	get mouseWheelChange()
+	{
+		return this._mouseWheel.deltaY || 0;
+	}
 
+	/**
+     * Get if mouse wheel delta on Y axis.
+     */
+	get mouseWheelChangeNormalized()
+	{
+		return Math.sign(this.mouseWheelChange);
+	}
+	
     /**
      * Get if mouse button is currently pressed.
      * @param {MouseButton} button Button code (defults to MouseButton.left).
@@ -306,12 +326,22 @@ class StInput
      * Get if mouse button was clicked since last endFrame() call.
      * @param {MouseButton} button Button code (defults to MouseButton.left).
      */
-    isMouseButtonReleased(button = 0)
+    mouseButtonReleasedNow(button = 0)
     {
         if (button === undefined) throw new Error("Invalid button code!");
         return this._mouseClick[button] === true;
     }
-
+    
+    /**
+     * Get if mouse button was pressed during this frame.
+     * @param {MouseButton} button Button code (defults to MouseButton.left).
+     */
+    mouseButtonPressedNow(button = 0)
+    {
+        if (button === undefined) throw new Error("Invalid button code!");
+        return this._mousePressedNow[button] === true;
+    }
+	
     /**
      * Get if keyboard button is currently pressed.
      * @param {KeyboardButton} button Button code.
@@ -335,10 +365,20 @@ class StInput
      * Get if keyboard button was released this frame.
      * @param {KeyboardButton} button Button code.
      */
-    isKeyboardButtonReleased(button)
+    keyboardButtonReleasedNow(button)
     {
         if (button === undefined) throw new Error("Invalid button code!");
-        return this._keyboardReleased[button] === true;
+        return this._keyboardReleasedNow[button] === true;
+    }
+	
+    /**
+     * Get if keyboard button was pressed this frame.
+     * @param {KeyboardButton} button Button code.
+     */
+    keyboardButtonPressedNow(button)
+    {
+        if (button === undefined) throw new Error("Invalid button code!");
+        return this._keyboardPressedNow[button] === true;
     }
 
     /**
@@ -376,6 +416,39 @@ class StInput
         }
         return false;
     }
+	
+	 /**
+     * Return if a mouse or keyboard button is currently set according to given states dictionaries.
+     * @param {string} code Keyboard or mouse code. 
+     *                          For mouse buttons: mouse_left, mouse_right or mouse_middle.
+     *                          For keyboard buttons: use one of the keys of KeyboardButton (for example 'a', 'alt', 'up_arrow', etc..)
+     *                          For numbers (0-9): you can use the number.
+	 * @param {function} testMouseBtn Function to return mouse button state.
+	 * @param {function} testKeyboardBtn Function to return keyboard button state.
+     */
+	_testState(code, testMouseBtn, testKeyboardBtn)
+	{
+		// make sure code is string
+        code = String(code);
+
+        // if starts with 'mouse' its for mouse button events
+        if (code.indexOf('mouse_') === 0) {
+
+            // get mouse code name
+            var codename = code.split('_')[1];
+
+            // return if mouse down
+            return testMouseBtn.call(this, this.MouseButton[codename]);
+        }
+
+        // if its just a number, add the 'n' prefix
+        if (!isNaN(parseInt(code)) && code.length === 1) {
+            code = 'n' + code;
+		}
+
+        // if not start with 'mouse', treat it as a keyboard key
+        return testKeyboardBtn.call(this, this.KeyboardButton[code]);
+	}
 
     /**
      * Return if a mouse or keyboard button is currently down.
@@ -386,25 +459,7 @@ class StInput
      */
     isDown(code)
     {
-        // make sure code is string
-        code = String(code);
-
-        // if starts with 'mouse' its for mouse button events
-        if (code.indexOf('mouse_') === 0) {
-
-            // get mouse code name
-            var codename = code.split('_')[1];
-
-            // return if mouse down
-            return this.isMouseButtonDown(this.MouseButton[codename]);
-        }
-
-        // if its just a number, add the 'n' prefix
-        if (!isNaN(parseInt(code)) && code.length === 1)
-            code = 'n' + code;
-
-        // if not start with 'mouse', treat it as a keyboard key
-        return this.isKeyboardButtonDown(this.KeyboardButton[code]);
+		return this._testState(code, this.isMouseButtonDown, this.isKeyboardButtonDown);
     }
 
     /**
@@ -414,29 +469,23 @@ class StInput
      *                          For keyboard buttons: use one of the keys of KeyboardButton (for example 'a', 'alt', 'up_arrow', etc..)
      *                          For numbers (0-9): you can use the number.
      */
-    isReleased(code)
+    releasedNow(code)
     {
-        // make sure code is string
-        code = String(code);
-
-        // if starts with 'mouse' its for mouse button events
-        if (code.indexOf('mouse') === 0) {
-
-            // get mouse code name
-            var codename = code.split('_')[1];
-
-            // return if mouse down
-            return this.isMouseButtonReleased(this.MouseButton[codename]);
-        }
-
-        // if its just a number, add the 'n' prefix
-        if (parseInt(code) != NaN && code.length === 1)
-            code = 'n' + code;
-
-        // if not start with 'mouse', treat it as a keyboard key
-        return this.isKeyboardButtonReleased(this.KeyboardButton[code]);
+		return this._testState(code, this.mouseButtonReleasedNow, this.keyboardButtonReleasedNow);
     }
 
+    /**
+     * Return if a mouse or keyboard button was pressed in this frame.
+     * @param {string} code Keyboard or mouse code. 
+     *                          For mouse buttons: mouse_left, mouse_right or mouse_middle.
+     *                          For keyboard buttons: use one of the keys of KeyboardButton (for example 'a', 'alt', 'up_arrow', etc..)
+     *                          For numbers (0-9): you can use the number.
+     */
+    pressedNow(code)
+    {
+		return this._testState(code, this.mouseButtonPressedNow, this.keyboardButtonPressedNow);
+    }
+	
     /**
      * update event states.
      * Call this every frame, *at the end of your main loop code*, to make sure events like mouse-click and mouse move work.
@@ -444,8 +493,11 @@ class StInput
     endFrame()
     {
         this._mouseClick = {};
+		this._mousePressedNow = {};
         this._mousePrevPos = this._mousePos.clone();
-        this._keyboardReleased = {};
+        this._keyboardReleasedNow = {};
+		this._keyboardPressedNow = {};
+		this._mouseWheel = {};
         this._mouseMoveCache = null;
     }
 
@@ -474,6 +526,9 @@ class StInput
     _onKeyDown(event)
     {
         var keycode = this._getKeyboardKeyCode(event);
+		if (!this._keyboardState[keycode]) {
+			this._keyboardPressedNow[keycode] = true;
+		}
         this._keyboardState[keycode] = true;
     }
 
@@ -485,7 +540,7 @@ class StInput
     {
         var keycode = this._getKeyboardKeyCode(event);
         this._keyboardState[keycode] = false;
-        this._keyboardReleased[keycode] = true;
+        this._keyboardReleasedNow[keycode] = true;
     }
 
     /**
@@ -495,6 +550,9 @@ class StInput
     _onMouseDown(event)
     {
         event = this._getEvent(event);
+		if (!this._mouseState[event.button]) {
+			this._mousePressedNow[event.button] = true;
+		}
         this._mouseState[event.button] = true;
     }
 
@@ -532,6 +590,19 @@ class StInput
         this._mousePos.x = pageX;
         this._mousePos.y = pageY;
     }
+	
+	/**
+     * Handle mouse wheel events.
+     * @param {*} event Event data from browser.
+     */
+	_onMouseWheel(event) 
+	{
+		// get event in a cross-browser way
+        event = this._getEvent(event);
+		
+		// set mouse wheel values
+		this._mouseWheel = {deltaY: event.deltaY};
+	}
 
     /**
      * Get event either from event param or from window.event. 

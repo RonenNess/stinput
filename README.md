@@ -42,14 +42,19 @@ function mainLoop()
 		console.log("Mouse is down.");
 	}
 
-	// left mouse button is released
-	if (input.isReleased('mouse_left')) {
-		console.log("Mouse was released.");
+	// left mouse button was released this frame
+	if (input.releasedNow('mouse_left')) {
+		console.log("Mouse was released this frame.");
+	}
+	
+	// left mouse button was released this frame
+	if (input.pressedNow('mouse_left')) {
+		console.log("Mouse was pressed this frame.");
 	}
 	
 	// keyboard button up arrow was released
-	if (input.isReleased('left_arrow')) {
-		console.log("Left arrow was released.");
+	if (input.releasedNow('left_arrow')) {
+		console.log("Left arrow was released this frame.");
 	}
 	
 	// mouse moved
@@ -113,16 +118,32 @@ Checking if mouse button was released this frame:
 
 ```js
 // returns if different mouse buttons were released this frame
-input.isReleased('mouse_left')
-input.isReleased('mouse_right')
-input.isReleased('mouse_middle')
+input.releasedNow('mouse_left')
+input.releasedNow('mouse_right')
+input.releasedNow('mouse_middle')
 
 // Or:
 
 // returns if different mouse buttons were released this frame
-input.isMouseButtonReleased(input.MouseButton.left)
-input.isMouseButtonReleased(input.MouseButton.right)
-input.isMouseButtonReleased(input.MouseButton.middle)
+input.mouseButtonReleasedNow(input.MouseButton.left)
+input.mouseButtonReleasedNow(input.MouseButton.right)
+input.mouseButtonReleasedNow(input.MouseButton.middle)
+```
+
+Checking if mouse button was pressed this frame:
+
+```js
+// returns if different mouse buttons were released this frame
+input.pressedNow('mouse_left')
+input.pressedNow('mouse_right')
+input.pressedNow('mouse_middle')
+
+// Or:
+
+// returns if different mouse buttons were released this frame
+input.mouseButtonPressedNow(input.MouseButton.left)
+input.mouseButtonPressedNow(input.MouseButton.right)
+input.mouseButtonPressedNow(input.MouseButton.middle)
 ```
 
 ### Mouse Position & Movement
@@ -148,6 +169,14 @@ Get a point {x,y} representing mouse movement since last frame:
 input.mouseMove
 ```
 
+### Mouse Wheel
+
+Get mouse wheel delta in current frame:
+
+```js
+input.mouseWheelChange;
+```
+
 ### Keyboard
 
 Checking if keyboard key is down:
@@ -166,12 +195,24 @@ Checking if keyboard key was released this frame:
 
 ```js
 // returns if 'a' key was released this frame
-input.isReleased('a')
+input.releasedNow('a')
 
 // Or:
 
 // returns if 'a' key was released this frame
-input.isKeyboardButtonReleased(input.KeyboardButton.a)
+input.keyboardButtonReleasedNow(input.KeyboardButton.a)
+```
+
+Checking if keyboard key was pressed this frame:
+
+```js
+// returns if 'a' key was released this frame
+input.pressedNow('a')
+
+// Or:
+
+// returns if 'a' key was released this frame
+input.keyboardButtonPressedNow(input.KeyboardButton.a)
 ```
 
 Check if any keyboard key is currently down:
