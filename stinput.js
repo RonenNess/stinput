@@ -507,6 +507,7 @@ class StInput
     _getKeyboardKeyCode(event)
     {
         event = this._getEvent(event);
+        if (event.keyCode === undefined && event.key === undefined) { return null; }
         return event.keyCode !== undefined ? event.keyCode : event.key.charCodeAt(0);
     }
 
@@ -526,10 +527,12 @@ class StInput
     _onKeyDown(event)
     {
         var keycode = this._getKeyboardKeyCode(event);
-		if (!this._keyboardState[keycode]) {
-			this._keyboardPressedNow[keycode] = true;
-		}
-        this._keyboardState[keycode] = true;
+        if (keycode !== null) {
+            if (!this._keyboardState[keycode]) {
+                this._keyboardPressedNow[keycode] = true;
+            }
+            this._keyboardState[keycode] = true;
+        }
     }
 
     /**
@@ -539,8 +542,10 @@ class StInput
     _onKeyUp(event)
     {
         var keycode = this._getKeyboardKeyCode(event);
-        this._keyboardState[keycode] = false;
-        this._keyboardReleasedNow[keycode] = true;
+        if (keycode !== null) {
+            this._keyboardState[keycode] = false;
+            this._keyboardReleasedNow[keycode] = true;
+        }
     }
 
     /**
