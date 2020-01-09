@@ -1,6 +1,6 @@
 # StInput
 
-State-based input for JavaScript, for modern browsers.
+State-based input for modern browsers.
 
 ## Install
 
@@ -38,28 +38,28 @@ input = new StInput();
 function mainLoop() 
 {
 	// left mouse button is down
-	if (input.isDown('mouse_left')) {
+	if (input.down('mouse_left')) {
 		console.log("Mouse is down.");
 	}
 
-	// left mouse button was released this frame
-	if (input.releasedNow('mouse_left')) {
-		console.log("Mouse was released this frame.");
+	// left mouse button was released this update call
+	if (input.released('mouse_left')) {
+		console.log("Mouse was released this update call.");
 	}
 	
-	// left mouse button was released this frame
-	if (input.pressedNow('mouse_left')) {
-		console.log("Mouse was pressed this frame.");
+	// left mouse button was released this update call
+	if (input.pressed('mouse_left')) {
+		console.log("Mouse was pressed this update call.");
 	}
 	
 	// keyboard button up arrow was released
-	if (input.releasedNow('left_arrow')) {
-		console.log("Left arrow was released this frame.");
+	if (input.released('left_arrow')) {
+		console.log("Left arrow was released this update call.");
 	}
 	
 	// mouse moved
-	if (input.isMouseMoving) {
-		console.log("Mouse move:", input.mouseMove);
+	if (input.mouseMoving) {
+		console.log("Mouse delta:", input.mouseDelta);
 	}
 	
 	// update input
@@ -70,7 +70,7 @@ function mainLoop()
 setInterval(mainLoop);
 ```
 
-And when you're done using it call ```input.dispose()```, which will unregister its event handlers.
+And when you're done using StInput call ```input.dispose()``` to unregister all its event handlers.
 
 ## Full API
 
@@ -90,7 +90,8 @@ input.dispose();
 
 ### Update
 
-For StInput to work properly, you must update it every frame of your main loop, at the end of the frame. To do so, call `endFrame()`:
+For StInput to work properly, you must update it every frame of your main loop, **at the end of your update function**. 
+To do so, call `endFrame()`:
 
 ```js
 input.endFrame();
@@ -102,48 +103,48 @@ Checking if mouse button is down:
 
 ```js
 // returns if different mouse buttons are held down
-input.isDown('mouse_left')
-input.isDown('mouse_right')
-input.isDown('mouse_middle')
+input.down('mouse_left')
+input.down('mouse_right')
+input.down('mouse_middle')
 
 // Or:
 
 // returns if different mouse buttons are held down
-input.isMouseButtonDown(input.MouseButton.left)
-input.isMouseButtonDown(input.MouseButton.right)
-input.isMouseButtonDown(input.MouseButton.middle)
+input.mouseDown(input.MouseButtons.left)
+input.mouseDown(input.MouseButtons.right)
+input.mouseDown(input.MouseButtons.middle)
 ```
 
-Checking if mouse button was released this frame:
+Checking if a mouse button was released this update call:
 
 ```js
-// returns if different mouse buttons were released this frame
-input.releasedNow('mouse_left')
-input.releasedNow('mouse_right')
-input.releasedNow('mouse_middle')
+// returns if different mouse buttons were released this update call
+input.released('mouse_left')
+input.released('mouse_right')
+input.released('mouse_middle')
 
 // Or:
 
-// returns if different mouse buttons were released this frame
-input.mouseButtonReleasedNow(input.MouseButton.left)
-input.mouseButtonReleasedNow(input.MouseButton.right)
-input.mouseButtonReleasedNow(input.MouseButton.middle)
+// returns if different mouse buttons were released this update call
+input.mouseReleased(input.MouseButtons.left)
+input.mouseReleased(input.MouseButtons.right)
+input.mouseReleased(input.MouseButtons.middle)
 ```
 
-Checking if mouse button was pressed this frame:
+Checking if mouse button was pressed this update call:
 
 ```js
-// returns if different mouse buttons were released this frame
-input.pressedNow('mouse_left')
-input.pressedNow('mouse_right')
-input.pressedNow('mouse_middle')
+// returns if different mouse buttons were released this update call
+input.pressed('mouse_left')
+input.pressed('mouse_right')
+input.pressed('mouse_middle')
 
 // Or:
 
-// returns if different mouse buttons were released this frame
-input.mouseButtonPressedNow(input.MouseButton.left)
-input.mouseButtonPressedNow(input.MouseButton.right)
-input.mouseButtonPressedNow(input.MouseButton.middle)
+// returns if different mouse buttons were released this update call
+input.mousePressed(input.MouseButtons.left)
+input.mousePressed(input.MouseButtons.right)
+input.mousePressed(input.MouseButtons.middle)
 ```
 
 ### Mouse Position & Movement
@@ -159,22 +160,26 @@ Checking if mouse is currently moving:
 
 ```js
 // returns true if mouse is currently moving
-input.isMouseMoving
+input.mouseMoving
 ```
 
-Get a point {x,y} representing mouse movement since last frame:
+Get a point {x,y} representing the mouse position delta since last update call:
 
 ```js
 // returns Point with x,y representing mouse movement
-input.mouseMove
+input.mouseDelta
 ```
 
 ### Mouse Wheel
 
-Get mouse wheel delta in current frame:
+Get mouse wheel delta in this update call:
 
 ```js
-input.mouseWheelChange;
+// get mouse wheel delta
+input.mouseWheel
+
+// get just the mouse wheel change sign:
+input.mouseWheelDirection
 ```
 
 ### Keyboard
@@ -183,43 +188,43 @@ Checking if keyboard key is down:
 
 ```js
 // returns if 'a' key is down
-input.isDown('a')
+input.down('a')
 
 // Or:
 
 // returns if 'a' key is down
-input.isKeyboardButtonDown(input.KeyboardButton.a)
+input.keyDown(input.KeyboardKeys.a)
 ```
 
-Checking if keyboard key was released this frame:
+Checking if keyboard key was released this update call:
 
 ```js
-// returns if 'a' key was released this frame
-input.releasedNow('a')
+// returns if 'a' key was released this update call
+input.released('a')
 
 // Or:
 
-// returns if 'a' key was released this frame
-input.keyboardButtonReleasedNow(input.KeyboardButton.a)
+// returns if 'a' key was released this update call
+input.keyReleased(input.KeyboardKeys.a)
 ```
 
-Checking if keyboard key was pressed this frame:
+Checking if keyboard key was pressed this update call:
 
 ```js
-// returns if 'a' key was released this frame
-input.pressedNow('a')
+// returns if 'a' key was released this update call
+input.pressed('a')
 
 // Or:
 
-// returns if 'a' key was released this frame
-input.keyboardButtonPressedNow(input.KeyboardButton.a)
+// returns if 'a' key was released this update call
+input.keyPressed(input.KeyboardKeys.a)
 ```
 
 Check if any keyboard key is currently down:
 
 ```js
 // returns if any keyboard key is held down
-input.isAnyKeyDown
+input.anyKeyDown
 ```
 
 Check special keys states:
@@ -227,27 +232,27 @@ Check special keys states:
 ```js
 // returns if alt, ctrl, or shift are currently held down
 // note: in some browsers pressing 'alt' will make the window lose focus, so its not recommended to use
-input.isAltDown
-input.isCtrlDown
-input.isShiftDown
+input.altDown
+input.ctrlDown
+input.shiftDown
 ```
 
 ### Supported Keys
 
-All supported mouse keys are:
+All supported mouse buttons are:
 
 ```js
-MouseButton = {
+Stinput.MouseButtonss = {
 	left: 0,
 	middle: 1,
 	right: 2,
-};
+}
 ```
 
 All supported keyboard keys are:
 
 ```js
-KeyboardButton = {
+Stinput.KeyboardKeys = {
 	backspace: 8,
 	tab: 9,
 	enter: 13,
@@ -347,7 +352,7 @@ KeyboardButton = {
 	back_slash: 220,
 	close_braket: 221,
 	single_quote: 222,
-};
+}
 ```
 
 ## Handling Focus Loss
@@ -365,4 +370,4 @@ input.resetOnFocusLoss = false;
 
 ## License
 
-StInput is distributed under the permissive MIT license and you may use it for any commercial or non-commercial purpose. 
+StInput is distributed under the permissive MIT license and may be used for any purpose, commercial included. 

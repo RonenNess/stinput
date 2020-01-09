@@ -88,94 +88,94 @@
         // our main loop
         function mainLoop() 
         {
-            if (input.isDown('mouse_left')) {
+            if (input.down('mouse_left')) {
                 is_down_mouse_left++;
             }
-            if (input.isDown('mouse_right')) {
+            if (input.down('mouse_right')) {
                 is_down_mouse_right++;
             }
-            if (input.isDown('mouse_middle')) {
+            if (input.down('mouse_middle')) {
                 is_down_mouse_middle++;
             }
-            if (input.releasedNow('mouse_left')) {
+            if (input.released('mouse_left')) {
                 is_released_mouse_left++;
             }
-            if (input.releasedNow('left_arrow')) {
+            if (input.released('left_arrow')) {
                 is_released_left_arrow++;
             }
-            if (input.releasedNow('right_arrow')) {
+            if (input.released('right_arrow')) {
                 is_released_right_arrow++;
             }
-            if (input.releasedNow('up_arrow')) {
+            if (input.released('up_arrow')) {
                 is_released_up_arrow++;
             }	
-			if (input.releasedNow('down_arrow')) {
+			if (input.released('down_arrow')) {
                 is_released_down_arrow++;
             }
-			if (input.pressedNow('mouse_left')) {
+			if (input.pressed('mouse_left')) {
                 is_pressed_mouse_left++;
             }
-            if (input.pressedNow('left_arrow')) {
+            if (input.pressed('left_arrow')) {
                 is_pressed_left_arrow++;
             }
-            if (input.pressedNow('right_arrow')) {
+            if (input.pressed('right_arrow')) {
                 is_pressed_right_arrow++;
             }
-            if (input.pressedNow('up_arrow')) {
+            if (input.pressed('up_arrow')) {
                 is_pressed_up_arrow++;
             }
-			if (input.pressedNow('down_arrow')) {
+			if (input.pressed('down_arrow')) {
                 is_pressed_down_arrow++;
             }
-            if (input.isDown('space')) {
+            if (input.down('space')) {
                 is_down_space++;
             }
-            if (input.isCtrlDown) {
+            if (input.ctrlDown) {
                 is_ctrl_down++;
             }
-            if (input.isAltDown) {
+            if (input.altDown) {
                 is_alt_down++;
             }
-            if (input.isShiftDown) {
+            if (input.shiftDown) {
                 is_shift_down++;
             }
-            if (input.isAnyKeyDown) {
+            if (input.anyKeyDown) {
                 is_any_key_down++;
             }
-			mouse_wheel_delta += input.mouseWheelChange;
-            mouse_wheel_delta_normal += input.mouseWheelChangeNormalized;
+			mouse_wheel_delta += input.mouseWheel;
+            mouse_wheel_delta_normal += input.mouseWheelDirection;
 			
             // mouse moved
-            if (input.isMouseMoving) {
+            if (input.mouseMoving) {
                 mouse_moved++;
-                last_mouse_move = input.mouseMove.x + "," + input.mouseMove.y;
+                last_mouse_move = input.mouseDelta.x + "," + input.mouseDelta.y;
             }
 
             // update text
             var container = $("#data-show");
             container.html("");
-            container.append($("<p>input.isDown('mouse_left') --> " + is_down_mouse_left + "</p>"));
-            container.append($("<p>input.isDown('mouse_right') --> " + is_down_mouse_right + "</p>"));
-            container.append($("<p>input.isDown('mouse_middle') --> " + is_down_mouse_middle + "</p>"));
-			container.append($("<p>input.mouseWheelChange --> " + mouse_wheel_delta + "</p>"));
-			container.append($("<p>input.mouseWheelChangeNormalized --> " + mouse_wheel_delta_normal + "</p>"));
-            container.append($("<p>input.releasedNow('mouse_left') --> " + is_released_mouse_left + "</p>"));
-            container.append($("<p>input.releasedNow('left_arrow') --> " + is_released_left_arrow + "</p>"));
-            container.append($("<p>input.releasedNow('right_arrow') --> " + is_released_right_arrow + "</p>"));
-            container.append($("<p>input.releasedNow('up_arrow') --> " + is_released_up_arrow + "</p>"));
-            container.append($("<p>input.releasedNow('down_arrow') --> " + is_released_down_arrow + "</p>"));
-			container.append($("<p>input.pressedNow('mouse_left') --> " + is_pressed_mouse_left + "</p>"));
-            container.append($("<p>input.pressedNow('left_arrow') --> " + is_pressed_left_arrow + "</p>"));
-            container.append($("<p>input.pressedNow('right_arrow') --> " + is_pressed_right_arrow + "</p>"));
-            container.append($("<p>input.pressedNow('up_arrow') --> " + is_pressed_up_arrow + "</p>"));
-            container.append($("<p>input.pressedNow('down_arrow') --> " + is_pressed_down_arrow + "</p>"));
-            container.append($("<p>input.isDown('space') --> " + is_down_space + "</p>"));
+            container.append($("<p>input.down('mouse_left') --> " + is_down_mouse_left + "</p>"));
+            container.append($("<p>input.down('mouse_right') --> " + is_down_mouse_right + "</p>"));
+            container.append($("<p>input.down('mouse_middle') --> " + is_down_mouse_middle + "</p>"));
+			container.append($("<p>input.mouseWheel --> " + mouse_wheel_delta + "</p>"));
+			container.append($("<p>input.mouseWheelDirection --> " + mouse_wheel_delta_normal + "</p>"));
+            container.append($("<p>input.released('mouse_left') --> " + is_released_mouse_left + "</p>"));
+            container.append($("<p>input.released('left_arrow') --> " + is_released_left_arrow + "</p>"));
+            container.append($("<p>input.released('right_arrow') --> " + is_released_right_arrow + "</p>"));
+            container.append($("<p>input.released('up_arrow') --> " + is_released_up_arrow + "</p>"));
+            container.append($("<p>input.released('down_arrow') --> " + is_released_down_arrow + "</p>"));
+			container.append($("<p>input.pressed('mouse_left') --> " + is_pressed_mouse_left + "</p>"));
+            container.append($("<p>input.pressed('left_arrow') --> " + is_pressed_left_arrow + "</p>"));
+            container.append($("<p>input.pressed('right_arrow') --> " + is_pressed_right_arrow + "</p>"));
+            container.append($("<p>input.pressed('up_arrow') --> " + is_pressed_up_arrow + "</p>"));
+            container.append($("<p>input.pressed('down_arrow') --> " + is_pressed_down_arrow + "</p>"));
+            container.append($("<p>input.down('space') --> " + is_down_space + "</p>"));
             container.append($("<p>input.isMouseMoving --> " + mouse_moved + "</p>"));
-            container.append($("<p>input.mouseMove --> " + last_mouse_move + "</p>"));
-            container.append($("<p>input.isCtrlDown --> " + is_ctrl_down + "</p>"));
-            container.append($("<p>input.isAltDown --> " + is_alt_down + "</p>"));
-            container.append($("<p>input.isShiftDown --> " + is_shift_down + "</p>"));
-            container.append($("<p>input.isAnyKeyDown --> " + is_any_key_down + "</p>"));
+            container.append($("<p>if (input.mouseMoving) input.mouseMove --> " + last_mouse_move + "</p>"));
+            container.append($("<p>input.ctrlDown --> " + is_ctrl_down + "</p>"));
+            container.append($("<p>input.altDown --> " + is_alt_down + "</p>"));
+            container.append($("<p>input.shiftDown --> " + is_shift_down + "</p>"));
+            container.append($("<p>input.anyKeyDown --> " + is_any_key_down + "</p>"));
             
             // update input
             input.endFrame();
