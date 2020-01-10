@@ -70,7 +70,7 @@ function mainLoop()
 setInterval(mainLoop);
 ```
 
-And when you're done using StInput call ```input.dispose()``` to unregister all its event handlers.
+When you finish using StInput call ```input.dispose()``` to unregister all its event handlers.
 
 ## Full API
 
@@ -79,7 +79,9 @@ And when you're done using StInput call ```input.dispose()``` to unregister all 
 Creating New StInput:
 
 ```js
-var input = new StInput();
+// 'element' is the DOM element you want to register events on. 
+// if not defined, will use 'window'.
+var input = new StInput(element);
 ```
 
 Destroying StInput:
@@ -354,6 +356,27 @@ Stinput.KeyboardKeys = {
 	single_quote: 222,
 }
 ```
+
+## Miscs
+
+Some extra properties you can set to StInput instance:
+
+### input.preventDefaults
+
+If true, will prevent defaults on all events it register to (defaults to false).
+
+### input.enableMouseDeltaWhileMouseWheelDown
+
+If true, will disable the default mouse-wheel-down action to allow getting mouse delta while users hold down the mouse wheel (defaults to true).
+
+### input.disableContextMenu
+
+If true, will disable the right-click context menu (defaults to true).
+
+### input.resetOnFocusLoss
+
+If true, will reset all internal states when element / window loses focus (defaults to true).
+This property is described later in details.
 
 ## Handling Focus Loss
 

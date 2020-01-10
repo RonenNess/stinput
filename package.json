@@ -1,6 +1,6 @@
 {
   "name": "stinput",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Simple state-based input for browsers.",
   "main": "stinput.js",
   "scripts": {
