@@ -319,6 +319,17 @@
             }
             return false;
         }
+
+        /**
+         * Get if any mouse button is down
+         */
+        get anyMouseButtonDown()
+        {
+            for (var key in this._mouseState) {
+                if (this._mouseState[key]) return true;
+            }
+            return false;
+        }
     
         /**
          * Return if a mouse or keyboard state in a generic way, used internally.
