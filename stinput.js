@@ -210,7 +210,7 @@
         mousePressed(button = 0)
         {
             if (button === undefined) throw new Error("Invalid button code!");
-            return this._mouseState[button] && !this._mousePrevState[button];
+            return Boolean(this._mouseState[button] && !this._mousePrevState[button]);
         }
     
         /**
@@ -220,7 +220,7 @@
         mouseDown(button = 0)
         {
             if (button === undefined) throw new Error("Invalid button code!");
-            return this._mouseState[button];
+            return Boolean(this._mouseState[button]);
         }
     
         /**
@@ -230,7 +230,7 @@
         mouseUp(button = 0)
         {
             if (button === undefined) throw new Error("Invalid button code!");
-            return !this.mouseDown(button);
+            return Boolean(!this.mouseDown(button));
         }
         
         /**
@@ -240,7 +240,7 @@
         mouseReleased(button = 0)
         {
             if (button === undefined) throw new Error("Invalid button code!");
-            return !this._mouseState[button] && this._mousePrevState[button];
+            return Boolean(!this._mouseState[button] && this._mousePrevState[button]);
         }
     
         /**
@@ -250,7 +250,7 @@
         keyDown(key)
         {
             if (key === undefined) throw new Error("Invalid key code!");
-            return this._keyboardState[key];
+            return Boolean(this._keyboardState[key]);
         }
     
         /**
@@ -260,7 +260,7 @@
         keyUp(key)
         {
             if (key === undefined) throw new Error("Invalid key code!");
-            return !this.keyDown(key);
+            return Boolean(!this.keyDown(key));
         }
     
         /**
@@ -270,7 +270,7 @@
         keyReleased(key)
         {
             if (key === undefined) throw new Error("Invalid key code!");
-            return !this._keyboardState[key] && this._keyboardPrevState[key];
+            return Boolean(!this._keyboardState[key] && this._keyboardPrevState[key]);
         }
     
         /**
@@ -280,7 +280,7 @@
         keyPressed(key)
         {
             if (key === undefined) throw new Error("Invalid key code!");
-            return this._keyboardState[key] && !this._keyboardPrevState[key];
+            return Boolean(this._keyboardState[key] && !this._keyboardPrevState[key]);
         }
     
         /**
@@ -288,7 +288,7 @@
          */
         get shiftDown()
         {
-            return this.keyDown(this.KeyboardKeys.shift);
+            return Boolean(this.keyDown(this.KeyboardKeys.shift));
         }
     
         /**
@@ -296,7 +296,7 @@
          */
         get ctrlDown()
         {
-            return this.keyDown(this.KeyboardKeys.ctrl);
+            return Boolean(this.keyDown(this.KeyboardKeys.ctrl));
         }
     
         /**
@@ -304,7 +304,7 @@
          */
         get altDown()
         {
-            return this.keyDown(this.KeyboardKeys.alt);
+            return Boolean(this.keyDown(this.KeyboardKeys.alt));
         }
     
         /**
@@ -326,7 +326,9 @@
         get anyMouseButtonDown()
         {
             for (var key in this._mouseState) {
-                if (this._mouseState[key]) return true;
+                if (this._mouseState[key]) {
+                    return true;
+                }
             }
             return false;
         }
@@ -373,7 +375,7 @@
          */
         down(code)
         {
-            return this._getValueWithCode(code, this.mouseDown, this.keyDown);
+            return Boolean(this._getValueWithCode(code, this.mouseDown, this.keyDown));
         }
     
         /**
@@ -385,7 +387,7 @@
          */
         released(code)
         {
-            return this._getValueWithCode(code, this.mouseReleased, this.keyReleased);
+            return Boolean(this._getValueWithCode(code, this.mouseReleased, this.keyReleased));
         }
     
         /**
@@ -397,7 +399,7 @@
          */
         pressed(code)
         {
-            return this._getValueWithCode(code, this.mousePressed, this.keyPressed);
+            return Boolean(this._getValueWithCode(code, this.mousePressed, this.keyPressed));
         }
     
         /**
